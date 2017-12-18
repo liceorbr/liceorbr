@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	
+</head>
+<body>
+		<form action="">
+			<label>Nombre: </label>
+			<input type="text" name="Nombre" id="Nombre"><br>
+
+			<textarea name="mensa" id="mensa" cols="35" rows="4"></textarea><br>
+			<button type="button" id="enve">Enviar</button>
+		</form>
+
+		<ul id="cat">
+			
+		</ul>
+
+		<script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+		<script>
+		  // Initialize Firebase
+		  var config = {
+		    apiKey: "AIzaSyCc4N3kEBybIMxfxEN8M-CnYOtpxkoSTLY",
+		    authDomain: "bdtime-b9e7e.firebaseapp.com",
+		    databaseURL: "https://bdtime-b9e7e.firebaseio.com",
+		    projectId: "bdtime-b9e7e",
+		    storageBucket: "bdtime-b9e7e.appspot.com",
+		    messagingSenderId: "115365012715"
+		  };
+		  firebase.initializeApp(config);
+
+		  var txtnombre = document.getElementById("Nombre");
+		  var txtmensaje = document.getElementById("mensa");
+		  var btnenviar = document.getElementById("enve");
+		  var ulchat = document.getElementById("cat");
+
+		  //capturar el valor que tiene el campo nombre y mensaje al presionar enviar y insertar una nueva fila
+		  btnenviar.addEventListener("click", function() {
+		  	var nombre = txtnombre.value;
+		  	var mensaje = txtmensaje.value;
+
+		  	//accedemos a la bd de firebase en su tabla y le pasamos un objeto
+		  	firebase.database().ref('chat').push({
+		  		name: nombre,
+		  		message: mensaje
+		  	});
+		  });
+
+			//recibimos los cambios realizados en la bd
+		  firebase.database().ref('chat')
+		  .on('value', function(snapshot){//los objeto enviados desde firebase se conocen como snapshot
+		  		var html = '';
+		  		snapshot.forEach(function (e) {
+		  			var element = e.val();
+		  			var nombre = element.name;
+		  			var mensaje = element.message;
+		  			html += "<li><b>"+nombre+": <b>"+mensaje+"</li>";
+		  		});
+		  		ulchat.innerHTML = html;
+		  });
+		</script>	
+</body>
+</html>
